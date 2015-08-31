@@ -1,0 +1,23 @@
+{
+  "name": "cullylarson/wp-deploy-database-sync",
+  "type": "library",
+  "description": "Library for syncing Wordpress databases. Useful for deploying, or pulling installs.",
+  "keywords": ["wordpress", "deploy"],
+  "homepage": "https://github.com/cullylarson/wp-deploy-database-sync",
+  "license": "MIT",
+  "authors": [{
+    "name": "Cully Larson",
+    "email": "cully.larson@gmail.com"
+  }],
+  "require": {
+    "php": ">=5.3.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Wordpress\\": "src/Wordpress"
+    }
+  }
+}
