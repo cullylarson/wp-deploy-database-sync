@@ -103,36 +103,12 @@ class Pusher {
      * @param $remoteDumpFilePath
      * @return bool
      */
-    private function extractRemoteDumpFile($statusCallback, $remoteDumpFilePath) {
-        $this->doStatusCallback(new Status("Extracting remote dump file ({$remoteDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
+    private function importRemoteDumpFile($statusCallback, $remoteDumpFilePath) {
+        $this->doStatusCallback(new Status("Importing remote dump file ({$remoteDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
 
         $scmd = new Ssh\Command($this->remote['ssh']);
 
-        $scmd->exec(sprinf("gunzip '%s'", escapeshellcmd($remoteDumpFilePath)));
-
-        if($scmd->failure()) {
-            $this->doStatusCallback(new Status("Error encountered while extracting dump file on remote server (Exit Status: {$scmd->getExitStatus()})", Status::MT_ERROR), $statusCallback);
-            $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT), $statusCallback);
-            return false;
-        }
-        else {
-            $this->doStatusCallback(new Status($scmd->getOutput(), Status::MT_RAW_OUTPUT), $statusCallback);
-            return true;
-        }
-
-    }
-
-    /**
-     * @param $statusCallback
-     * @param $remoteExtractedDumpFilePath
-     * @return bool
-     */
-    private function importRemoteSqlFile($statusCallback, $remoteExtractedDumpFilePath) {
-        $this->doStatusCallback(new Status("Importing remote dump file ({$remoteExtractedDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
-
-        $scmd = new Ssh\Command($this->remote['ssh']);
-
-        $importCommand = CommandUtil::buildImportCommand($this->remote, $remoteExtractedDumpFilePath);
+        $importCommand = CommandUtil::buildImportCommandWithGunzip($this->remote, $remoteDumpFilePath);
         $scmd->exec($importCommand);
 
         if($scmd->failure()) {
@@ -146,21 +122,21 @@ class Pusher {
         }
     }
 
-    private function deleteRemoteDumpFile($statusCallback, $remoteExtractedDumpFilePath) {
+    private function deleteRemoteDumpFile($statusCallback, $remoteDumpFilePath) {
         if(!$this->options->shouldKeepRemoteDumpCopy()) {
-            $this->doStatusCallback(new Status("Deleting remote dump file ({$remoteExtractedDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
+            $this->doStatusCallback(new Status("Deleting remote dump file ({$remoteDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
 
             $scmd = new Ssh\Command($this->remote['ssh']);
 
-            $scmd->exec(sprintf("rm '%s'", escapeshellcmd($remoteExtractedDumpFilePath)));
+            $scmd->exec(sprintf("rm '%s'", escapeshellcmd($remoteDumpFilePath)));
 
             if($scmd->failure()) {
-                $this->doStatusCallback(new Status("Failed to delete remote dump file ({$remoteExtractedDumpFilePath}).", Status::MT_WARNING), $statusCallback);
+                $this->doStatusCallback(new Status("Failed to delete remote dump file ({$remoteDumpFilePath}).", Status::MT_WARNING), $statusCallback);
                 $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT), $statusCallback);
             }
         }
         else {
-            $this->doStatusCallback(new Status("Keeping remote dump file ({$remoteExtractedDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
+            $this->doStatusCallback(new Status("Keeping remote dump file ({$remoteDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
         }
     }
 
@@ -193,7 +169,6 @@ class Pusher {
     public function push($statusCallback=null) {
         $localDumpFilePath = $this->local['tmp'] . "/" . $this->exportFilename->getGzipFilename();
         $remoteDumpFilePath = $this->remote['tmp'] . "/" . $this->exportFilename->getGzipFilename();
-        $remoteExtractedDumpFilePath = $this->remote['tmp'] . "/" . $this->exportFilename->getSqlFilename();
 
         /*
          * Dump the local database
@@ -215,19 +190,11 @@ class Pusher {
 
         $this->deleteLocalDumpFile($statusCallback, $localDumpFilePath);
 
-
-        /*
-         * Extract the dump file
-         */
-
-        $extractRemoteSuccess = $this->extractRemoteDumpFile($statusCallback, $remoteDumpFilePath);
-        if(!$extractRemoteSuccess) return false;
-
         /*
          * Import the sql file
          */
 
-        $importRemoteSqlSuccess = $this->importRemoteSqlFile($statusCallback, $remoteExtractedDumpFilePath);
+        $importRemoteSqlSuccess = $this->importRemoteDumpFile($statusCallback, $remoteDumpFilePath);
         if(!$importRemoteSqlSuccess) return false;
 
 
@@ -235,7 +202,7 @@ class Pusher {
          * Delete the remote dump file
          */
 
-        $this->deleteRemoteDumpFile($statusCallback, $remoteExtractedDumpFilePath);
+        $this->deleteRemoteDumpFile($statusCallback, $remoteDumpFilePath);
 
         /*
          * Database Search & Replace

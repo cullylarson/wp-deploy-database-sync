@@ -43,4 +43,29 @@ class CommandUtil {
 
         return $command;
     }
+
+    public static function buildImportCommandWithGunzip($dbParams, $inputGzipedFilePath) {
+        $command = sprintf(
+            "gunzip -c '%s' | mysql -h '%s' -u '%s' -p'%s' '%s'",
+            escapeshellcmd($inputGzipedFilePath),
+            escapeshellcmd($dbParams['host']),
+            escapeshellcmd($dbParams['username']),
+            escapeshellcmd($dbParams['password']),
+            escapeshellcmd($dbParams['name'])
+        );
+
+        return $command;
+    }
+
+    public static function buildMysqlCommand($dbParams) {
+        $command = sprintf(
+            "mysql -h '%s' -u '%s' -p'%s' '%s'",
+            escapeshellcmd($dbParams['host']),
+            escapeshellcmd($dbParams['username']),
+            escapeshellcmd($dbParams['password']),
+            escapeshellcmd($dbParams['name'])
+        );
+
+        return $command;
+    }
 }
