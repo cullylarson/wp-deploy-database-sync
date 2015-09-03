@@ -108,7 +108,7 @@ class Pusher {
 
         $scmd = new Ssh\Command($this->remote['ssh']);
 
-        $importCommand = CommandUtil::buildImportCommandWithGunzip($this->remote, $remoteDumpFilePath);
+        $importCommand = CommandUtil::buildImportCommandFromGunzipFile($this->remote, $remoteDumpFilePath);
         $scmd->exec($importCommand);
 
         if($scmd->failure()) {

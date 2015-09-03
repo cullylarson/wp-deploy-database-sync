@@ -12,6 +12,7 @@ class Options {
         $this->options = $options;
 
         $this->validate();
+        $this->setDefaultValues();
     }
 
     private function validate() {
@@ -31,6 +32,26 @@ class Options {
         if(!is_resource($this->options['remote']['ssh'])) throw new \InvalidArgumentException("The ssh connection resource you provided is not a resource.");
 
         if(isset($this->options['db_search_replace']) && !is_array($this->options['db_search_replace'])) throw new \InvalidArgumentException("The 'db_search_replace' param must be an array.");
+    }
+
+    private function setDefaultValues() {
+        $defaults = [
+            'local' => [
+                'db' => [
+                    'port' => 3306,
+                ]
+            ],
+            'remote' => [
+                'db' => [
+                    'port' => 3306,
+                ]
+            ],
+            'keep_local_backup' => false,
+            'keep_remote_backup' => false,
+        ];
+
+        // TODO -- make sure this works
+        $this->options = array_merge_recursive($defaults, $this->options);
     }
 
     public function getLocalOptions() {
