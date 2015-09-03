@@ -41,20 +41,20 @@ class Options {
         return $this->options['remote'];
     }
 
-    public function shouldKeepLocalDumpCopy() {
-        return $this->getBoolOption('keep_local_dump_copy', false);
+    public function shouldKeepLocalBackup() {
+        return $this->getBoolOption('keep_local_backup', false);
     }
 
-    public function shouldKeepRemoteDumpCopy() {
-        return $this->getBoolOption('keep_remote_dump_copy', false);
+    public function shouldKeepRemoteBackup() {
+        return $this->getBoolOption('keep_remote_backup', false);
     }
 
-    public function shouldDoDbSearchReplace() {
-        return (isset($this->options['db_search_replace']) && !empty($this->options['db_search_replace']));
+    public function shouldDoSearchReplace() {
+        return (isset($this->options['search_replace']) && !empty($this->options['search_replace']));
     }
 
-    public function getDbSearchReplace() {
-        return $this->getArrayOption('db_search_replace');
+    public function getSearchReplace() {
+        return $this->getArrayOption('search_replace');
     }
 
     private function getBoolOption($option, $defaultVal) {

@@ -81,7 +81,7 @@ class Pusher {
      * @param $localDumpFilePath
      */
     private function deleteLocalDumpFile($statusCallback, $localDumpFilePath) {
-        if( !$this->options->shouldKeepLocalDumpCopy() ) {
+        if( !$this->options->shouldKeepLocalBackup() ) {
             $this->doStatusCallback(new Status("Deleting local dump file ({$localDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
 
             $scmd = new Ssh\Command($this->remote['ssh']);
@@ -123,7 +123,7 @@ class Pusher {
     }
 
     private function deleteRemoteDumpFile($statusCallback, $remoteDumpFilePath) {
-        if(!$this->options->shouldKeepRemoteDumpCopy()) {
+        if(!$this->options->shouldKeepRemoteBackup()) {
             $this->doStatusCallback(new Status("Deleting remote dump file ({$remoteDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
 
             $scmd = new Ssh\Command($this->remote['ssh']);
@@ -141,12 +141,12 @@ class Pusher {
     }
 
     private function remoteDatabaseSearchReplace($statusCallback) {
-        if($this->options->shouldDoDbSearchReplace()) {
+        if($this->options->shouldDoSearchReplace()) {
             $this->doStatusCallback(new Status("Performing database search & replace.", Status::MT_NOTICE));
 
             $scmd = new Ssh\Command($this->remote['ssh']);
 
-            foreach($this->options->getDbSearchReplace() as $search => $replace) {
+            foreach($this->options->getSearchReplace() as $search => $replace) {
                 $this->doStatusCallback(new Status("Database search & replace: {$search} -> {$replace}", Status::MT_NOTICE));
 
                 $srCommand = CommandUtil::buildSrdbCommand($this->remote['srdb'], $this->remote, $search, $replace);
