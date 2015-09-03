@@ -34,8 +34,8 @@ class DatabaseSync {
      * @return boolean
      */
     public function push($statusCallback=null) {
-        $push = new Pusher($this->options, $this->exportFilename);
-        return $push->push($statusCallback);
+        $pusher = new Pusher($this->options, $this->exportFilename);
+        return $pusher->push($statusCallback);
     }
 
     /**
