@@ -20,6 +20,7 @@ class Status {
     const MT_WARNING = "warning";
     const MT_ERROR = "error";
     const MT_RAW_OUTPUT = "output";
+    const MT_RAW_ERROR_OUTPUT = "error_output";
 
     public function __construct($message, $messageType=self::MT_NOTICE) {
         $this->Message = $message;
@@ -41,5 +42,9 @@ class Status {
 
     public function isRawOutput() {
         return ($this->messageType == self::MT_RAW_OUTPUT);
+    }
+
+    public function isRawErrorOutput() {
+        return ($this->messageType == self::MT_RAW_ERROR_OUTPUT);
     }
 }

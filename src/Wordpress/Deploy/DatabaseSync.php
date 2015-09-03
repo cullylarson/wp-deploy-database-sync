@@ -5,7 +5,10 @@ namespace Wordpress\Deploy;
 use Wordpress\Deploy\DatabaseSync\Status;
 use Wordpress\Deploy\DatabaseSync\Options;
 use Wordpress\Deploy\DatabaseSync\ExportFile;
-use Wordpress\Deploy\DatabaseSync\Machine;
+use Wordpress\Deploy\DatabaseSync\Pusher;
+
+use Cully\Local;
+use Cully\Ssh;
 
 class DatabaseSync {
     /**
@@ -23,47 +26,25 @@ class DatabaseSync {
     public function __construct(array $options) {
         $this->options = new Options($options);
         $this->exportFilename = new ExportFile($this->generateExportFilenameBase());
-
     }
 
     /**
      * @param \Closure|null $statusCallback
+     *
+     * @return boolean
      */
     public function push($statusCallback=null) {
-
+        $push = new Pusher($this->options, $this->exportFilename);
+        return $push->push($statusCallback);
     }
 
     /**
      * @param \Closure|null $statusCallback
+     *
+     * @return boolean
      */
     public function pull($statusCallback=null) {
 
-    }
-
-    private function export($statusCallback=null) {
-        $this->doStatusCallback(new Status("Exporting the database."), $statusCallback);
-
-        // if we have an ssh connection to the source, then export that way
-        if($this->options->haveSourceSsh()) {
-            return $this->exportSsh($statusCallback);
-        }
-        // otherwise, export from the source locally
-        else {
-            return $this->exportCmd($statusCallback);
-        }
-    }
-
-    private function import($statusCallback=null, $sqlFilePath) {
-        $this->doStatusCallback(new Status("Importing the database."), $statusCallback);
-
-        // if we have an ssh connection to the dest, then export that way
-        if($this->options->haveDestSsh()) {
-            $this->importSsh($statusCallback);
-        }
-        // otherwise, import the the destination locally
-        else {
-            $this->importCmd($statusCallback, $sqlFilePath);
-        }
     }
 
     private function generateExportFilenameBase() {
