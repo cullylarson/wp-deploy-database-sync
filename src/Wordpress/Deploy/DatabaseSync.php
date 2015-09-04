@@ -11,6 +11,8 @@ use Wordpress\Deploy\DatabaseSync\Puller;
 use Cully\Local;
 use Cully\Ssh;
 
+// TODO -- support dry runs?
+
 class DatabaseSync {
     /**
      * @var Options
