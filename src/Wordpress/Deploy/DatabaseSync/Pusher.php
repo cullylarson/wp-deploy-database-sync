@@ -142,25 +142,25 @@ class Pusher {
 
     private function remoteDatabaseSearchReplace($statusCallback) {
         if($this->options->shouldDoSearchReplace()) {
-            $this->doStatusCallback(new Status("Performing database search & replace.", Status::MT_NOTICE));
+            $this->doStatusCallback(new Status("Performing database search & replace.", Status::MT_NOTICE), $statusCallback);
 
             $scmd = new Ssh\Command($this->remote['ssh']);
 
             foreach($this->options->getSearchReplace() as $search => $replace) {
-                $this->doStatusCallback(new Status("Database search & replace: {$search} -> {$replace}", Status::MT_NOTICE));
+                $this->doStatusCallback(new Status("Database search & replace: {$search} -> {$replace}", Status::MT_NOTICE), $statusCallback);
 
                 $srCommand = CommandUtil::buildSrdbCommand($this->remote['srdb'], $this->remote, $search, $replace);
                 $scmd->exec($srCommand);
 
                 if($scmd->failure()) {
-                    $this->doStatusCallback(new Status("Error while performing search and replace.", Status::MT_ERROR));
-                    $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT));
+                    $this->doStatusCallback(new Status("Error while performing search and replace.", Status::MT_ERROR), $statusCallback);
+                    $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT), $statusCallback);
                     return false;
                 }
             }
         }
         else {
-            $this->doStatusCallback(new Status("Skipping database search & replace because none have been provided.", Status::MT_NOTICE));
+            $this->doStatusCallback(new Status("Skipping database search & replace because none have been provided.", Status::MT_NOTICE), $statusCallback);
         }
 
         return true;
