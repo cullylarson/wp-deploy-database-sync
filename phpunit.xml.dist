@@ -1,0 +1,54 @@
+<phpunit bootstrap="./tests/phpunit-bootstrap.php">
+    <php>
+        <!--
+            Currently only supports connections using rsa auth.
+
+            If you get an auth error when running the tests, you might need
+            to execute this on the command-line:  eval `ssh-agent -s` && ssh-add
+        -->
+        <env name="SSH_USER" value="" />
+        <env name="SSH_HOST" value="localhost" />
+        <env name="SSH_PORT" value="22" />
+
+        <!-- temp folder for remote dump files -->
+        <env name="REMOTE_TMP" value="/tmp" />
+
+        <!-- path to the srdb command on the remote machine -->
+        <env name="REMOTE_SRDB" value="" />
+
+        <!-- temp folder for local dump files -->
+        <env name="LOCAL_TMP" value="./tests/tmp" />
+
+        <env name="REMOTE_MYSQL_HOST" value="localhost" />
+        <env name="REMOTE_MYSQL_USER" value="" />
+        <env name="REMOTE_MYSQL_PASS" value="" />
+        <env name="REMOTE_MYSQL_PORT" value="3306" />
+        <env name="REMOTE_MYSQL_NAME" value="" />
+
+        <env name="LOCAL_MYSQL_HOST" value="localhost" />
+        <env name="LOCAL_MYSQL_USER" value="" />
+        <env name="LOCAL_MYSQL_PASS" value="" />
+        <env name="LOCAL_MYSQL_PORT" value="3306" />
+        <env name="LOCAL_MYSQL_NAME" value="" />
+    </php>
+
+    <testsuite name="Wordpress Deploy DatabaseSync Test Suite">
+        <directory>./tests/</directory>
+    </testsuite>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src/Wordpress/Deploy/</directory>
+        </whitelist>
+        <blacklist>
+            <directory>test/tmp</directory>
+        </blacklist>
+    </filter>
+
+    <logging>
+        <log type="coverage-html" target="./tests/log/report" charset="UTF-8"
+             yui="true" highlight="true"
+             lowUpperBound="50" highLowerBound="80"/>
+        <log type="testdox-html" target="./tests/log/testdox.html" />
+    </logging>
+</phpunit>
