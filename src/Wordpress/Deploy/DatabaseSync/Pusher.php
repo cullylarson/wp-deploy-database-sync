@@ -25,6 +25,14 @@ class Pusher {
      * @var array
      */
     private $local;
+    /**
+     * @var array
+     */
+    private $remoteDb;
+    /**
+     * @var array
+     */
+    private $localDb;
 
     /**
      * @param \Wordpress\Deploy\DatabaseSync\Options $options
@@ -35,6 +43,8 @@ class Pusher {
         $this->exportFilename = $exportFilename;
         $this->remote = $options->getRemoteOptions();
         $this->local = $options->getLocalOptions();
+        $this->remoteDb = $options->getRemoteDbOptions();
+        $this->localDb = $options->getLocalDbOptions();
     }
 
     /**
@@ -44,8 +54,8 @@ class Pusher {
      */
     private function dumpLocalDatabase($statusCallback, $localDumpFilePath) {
         $this->doStatusCallback(new Status("Dumping local database to file.", Status::MT_NOTICE), $statusCallback);
-        $dumpCommand = CommandUtil::buildDumpCommand($this->local, $localDumpFilePath);
-        $lcmd = Local\Command();
+        $dumpCommand = CommandUtil::buildDumpCommand($this->localDb, $localDumpFilePath);
+        $lcmd = new Local\Command();
         $lcmd->exec($dumpCommand);
 
         // failed
@@ -65,6 +75,8 @@ class Pusher {
      * @return bool
      */
     private function copyDumpFileToServer($statusCallback, $localDumpFilePath, $remoteDumpFilePath) {
+        $this->doStatusCallback(new Status("Copying dump file to remote server.", Status::MT_NOTICE), $statusCallback);
+
         $copySuccessful = ssh2_scp_send($this->remote['ssh'], $localDumpFilePath, $remoteDumpFilePath);
 
         // failed
@@ -108,7 +120,7 @@ class Pusher {
 
         $scmd = new Ssh\Command($this->remote['ssh']);
 
-        $importCommand = CommandUtil::buildImportCommandFromGunzipFile($this->remote, $remoteDumpFilePath);
+        $importCommand = CommandUtil::buildImportCommandFromGunzipFile($this->remoteDb, $remoteDumpFilePath);
         $scmd->exec($importCommand);
 
         if($scmd->failure()) {
@@ -128,7 +140,7 @@ class Pusher {
 
             $scmd = new Ssh\Command($this->remote['ssh']);
 
-            $scmd->exec(sprintf("rm '%s'", escapeshellcmd($remoteDumpFilePath)));
+            $scmd->exec(sprintf("rm %s", escapeshellarg($remoteDumpFilePath)));
 
             if($scmd->failure()) {
                 $this->doStatusCallback(new Status("Failed to delete remote dump file ({$remoteDumpFilePath}).", Status::MT_WARNING), $statusCallback);
@@ -149,7 +161,7 @@ class Pusher {
             foreach($this->options->getSearchReplace() as $search => $replace) {
                 $this->doStatusCallback(new Status("Database search & replace: {$search} -> {$replace}", Status::MT_NOTICE), $statusCallback);
 
-                $srCommand = CommandUtil::buildSrdbCommand($this->remote['srdb'], $this->remote, $search, $replace);
+                $srCommand = CommandUtil::buildSrdbCommand($this->remote['srdb'], $this->remoteDb, $search, $replace);
                 $scmd->exec($srCommand);
 
                 if($scmd->failure()) {

@@ -31,7 +31,7 @@ class Options {
         if(!isset($this->options['remote']['ssh'])) throw new \InvalidArgumentException("You must provide an ssh connection resource to the remote machine.");
         if(!is_resource($this->options['remote']['ssh'])) throw new \InvalidArgumentException("The ssh connection resource you provided is not a resource.");
 
-        if(isset($this->options['db_search_replace']) && !is_array($this->options['db_search_replace'])) throw new \InvalidArgumentException("The 'db_search_replace' param must be an array.");
+        if(isset($this->options['search_replace']) && !is_array($this->options['search_replace'])) throw new \InvalidArgumentException("The 'search_replace' param must be an array.");
     }
 
     private function setDefaultValues() {
@@ -51,7 +51,7 @@ class Options {
         ];
 
         // TODO -- make sure this works
-        $this->options = array_merge_recursive($defaults, $this->options);
+        $this->options = array_merge($defaults, $this->options);
     }
 
     public function getLocalOptions() {
@@ -60,6 +60,14 @@ class Options {
 
     public function getRemoteOptions() {
         return $this->options['remote'];
+    }
+
+    public function getLocalDbOptions() {
+        return $this->options['local']['db'];
+    }
+
+    public function getRemoteDbOptions() {
+        return $this->options['remote']['db'];
     }
 
     public function shouldKeepLocalBackup() {

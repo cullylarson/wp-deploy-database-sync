@@ -48,7 +48,7 @@ class DatabaseSync {
     }
 
     private function generateExportFilenameBase() {
-        $dbName = $this->options->getSourceOptions()['name'];
+        $dbName = $this->options->getLocalDbOptions()['name'];
         $filename = preg_replace("/[^a-zA-Z0-9]/", "", $dbName);
         if(empty($filename)) $filename = "database";
 

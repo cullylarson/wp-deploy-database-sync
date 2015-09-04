@@ -5,15 +5,15 @@ namespace Wordpress\Deploy\DatabaseSync;
 class CommandUtil {
     public static function buildSrdbCommand($srdbPath, $dbParams, $search, $replace) {
         $command = sprintf(
-            "%s --host='%s' --user='%s' --pass='%s' --port='%s' --name='%s' --search='%s' --replace='%s'",
+            "php %s --host=%s --user=%s --pass=%s --port=%s --name=%s --search=%s --replace=%s",
             $srdbPath,
-            escapeshellcmd($dbParams['host']),
-            escapeshellcmd($dbParams['username']),
-            escapeshellcmd($dbParams['password']),
-            escapeshellcmd($dbParams['port']),
-            escapeshellcmd($dbParams['name']),
-            escapeshellcmd($search),
-            escapeshellcmd($replace)
+            escapeshellarg($dbParams['host']),
+            escapeshellarg($dbParams['username']),
+            escapeshellarg($dbParams['password']),
+            escapeshellarg($dbParams['port']),
+            escapeshellarg($dbParams['name']),
+            escapeshellarg($search),
+            escapeshellarg($replace)
         );
 
         return $command;
@@ -21,20 +21,9 @@ class CommandUtil {
 
     public static function buildDumpCommand($dbParams, $outputFilePath) {
         $mysqlOptions = self::buildMysqlCommandOptions($dbParams);
-        $command = sprintf("mysqldump %s | gzip -> '%s'",
+        $command = sprintf("mysqldump %s | gzip -> %s",
             $mysqlOptions,
-            escapeshellcmd($outputFilePath)
-        );
-
-        return $command;
-    }
-
-    public static function buildImportCommandFromSqlFile($dbParams, $inputFilePath) {
-        $mysqlCommand = self::buildMysqlCommand($dbParams);
-
-        $command = sprintf("%s < '%s'",
-            $mysqlCommand,
-            escapeshellcmd($inputFilePath)
+            escapeshellarg($outputFilePath)
         );
 
         return $command;
@@ -43,8 +32,8 @@ class CommandUtil {
     public static function buildImportCommandFromGunzipFile($dbParams, $inputGzipedFilePath) {
         $mysqlCommand = self::buildMysqlCommand($dbParams);
 
-        $command = sprintf("gunzip -c '%s' | %s",
-            escapeshellcmd($inputGzipedFilePath),
+        $command = sprintf("gunzip -c %s | %s",
+            escapeshellarg($inputGzipedFilePath),
             $mysqlCommand
         );
 
@@ -59,12 +48,12 @@ class CommandUtil {
 
     private static function buildMysqlCommandOptions($dbParams) {
         $options = sprintf(
-            "--host='%s' --user='%s' --password='%s' --port='%s' --database='%s'",
-            escapeshellcmd($dbParams['host']),
-            escapeshellcmd($dbParams['username']),
-            escapeshellcmd($dbParams['password']),
-            escapeshellcmd($dbParams['port']),
-            escapeshellcmd($dbParams['name'])
+            "--host=%s --user=%s --password=%s --port=%s %s",
+            escapeshellarg($dbParams['host']),
+            escapeshellarg($dbParams['username']),
+            escapeshellarg($dbParams['password']),
+            escapeshellarg($dbParams['port']),
+            escapeshellarg($dbParams['name'])
         );
 
         return $options;
