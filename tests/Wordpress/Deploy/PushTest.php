@@ -6,6 +6,8 @@ use Wordpress\Deploy\DatabaseSync;
 use Wordpress\Deploy\DatabaseSync\CommandUtil;
 use Cully\Ssh;
 
+// TODO -- test with optional options
+
 class PushTest extends \PHPUnit_Framework_TestCase {
     private $session;
     private $dbh;

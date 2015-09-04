@@ -35,6 +35,7 @@ call_user_func(function() {
         "REMOTE_SRDB",
 
         "LOCAL_TMP",
+        "LOCAL_SRDB",
 
         "REMOTE_MYSQL_HOST",
         "REMOTE_MYSQL_USER",

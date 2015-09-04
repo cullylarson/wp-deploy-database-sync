@@ -6,6 +6,7 @@ use Wordpress\Deploy\DatabaseSync\Status;
 use Wordpress\Deploy\DatabaseSync\Options;
 use Wordpress\Deploy\DatabaseSync\ExportFile;
 use Wordpress\Deploy\DatabaseSync\Pusher;
+use Wordpress\Deploy\DatabaseSync\Puller;
 
 use Cully\Local;
 use Cully\Ssh;
@@ -44,7 +45,8 @@ class DatabaseSync {
      * @return boolean
      */
     public function pull($statusCallback=null) {
-
+        $puller = new Puller($this->options, $this->exportFilename);
+        return $puller->pull($statusCallback);
     }
 
     private function generateExportFilenameBase() {
@@ -53,14 +55,5 @@ class DatabaseSync {
         if(empty($filename)) $filename = "database";
 
         return $filename . "-" . date("Ymd-His");
-    }
-
-    /**
-     * @param Status $status
-     * @param \Closure|null $statusCallback
-     */
-    private function doStatusCallback(Status $status, $statusCallback) {
-        if(!$statusCallback) return;
-        else $statusCallback($status);
     }
 }

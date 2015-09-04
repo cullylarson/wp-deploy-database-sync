@@ -20,6 +20,7 @@ class Options {
         if(!isset($this->options['local']['db']['username'])) throw new \InvalidArgumentException("You must provide the local username.");
         if(!isset($this->options['local']['db']['password'])) throw new \InvalidArgumentException("You must provide the local password.");
         if(!isset($this->options['local']['db']['name'])) throw new \InvalidArgumentException("You must provide the local database name.");
+        if(!isset($this->options['local']['srdb'])) throw new \InvalidArgumentException("You must provide the local path to srdb.cli.php.");
         if(!isset($this->options['local']['tmp'])) throw new \InvalidArgumentException("You must provide the local location of a folder for temporary files.");
 
         if(!isset($this->options['remote']['db']['host'])) throw new \InvalidArgumentException("You must provide the remote host.");
