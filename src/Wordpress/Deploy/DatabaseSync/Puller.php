@@ -57,7 +57,7 @@ class Puller {
     private function dumpRemoteDatabase($statusCallback, $remoteDumpFilePath) {
         $this->doStatusCallback(new Status("Dumping remote database to file.", Status::MT_NOTICE), $statusCallback);
         $dumpCommand = CommandUtil::buildDumpCommand($this->remoteDb, $remoteDumpFilePath);
-        $scmd = new Ssh\Command();
+        $scmd = new Ssh\Command($this->remote['ssh']);
         $scmd->exec($dumpCommand);
 
         // failed

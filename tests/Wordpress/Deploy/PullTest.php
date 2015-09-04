@@ -7,9 +7,13 @@ use Wordpress\Deploy\DatabaseSync\CommandUtil;
 use Cully\Ssh;
 
 // TODO -- test with optional options
+// TODO -- I'm assuming the local db is localhost
 
-class PushTest extends \PHPUnit_Framework_TestCase {
+class PullTest extends \PHPUnit_Framework_TestCase {
     private $session;
+    /**
+     * @var \PDO
+     */
     private $dbh;
     private $failed = false;//stub
 
@@ -32,7 +36,7 @@ class PushTest extends \PHPUnit_Framework_TestCase {
         $this->session = $session;
 
         /*
-         * Set up the local database
+         * Connect to local database
          */
 
         try {
@@ -42,22 +46,37 @@ class PushTest extends \PHPUnit_Framework_TestCase {
             $this->markTestSkipped("Couldn't connect to local database: {$e}");
         }
 
-        $dbh->query("
-            CREATE TABLE wp_deploy_pushtest (
+        /*
+         * Create remote table
+         */
+
+        $scmd = new Ssh\Command($this->session);
+        $remoteQueryCommandBase = CommandUtil::buildMysqlCommand($this->getDbSyncParams()['remote']['db']);
+
+        $remoteQueryCommandCreateTable = "{$remoteQueryCommandBase} -e 'CREATE TABLE wp_deploy_pushtest (
                 id  INT UNSIGNED  NOT NULL  AUTO_INCREMENT,
                 name VARCHAR(255) NULL,
                 content TEXT NULL,
                 PRIMARY KEY (id)
-            )
-        ") or $this->markTestSkipped("Couldn't create local test table.");
+            )'";
+
+        $scmd->exec($remoteQueryCommandCreateTable);
+
+        if($scmd->failure()) {
+            $this->markTestSkipped("Couldn't create remote test table.");
+        }
 
         /*
          * Insert some database values
          */
 
-        $dbh->query("INSERT INTO wp_deploy_pushtest (name, content) VALUES ('test_value_one', 'test_content_one')")
-            or $this->markTestSkipped("Couldn't add data to local test table.");
+        $remoteQueryCommandInsertData = "{$remoteQueryCommandBase} -e 'INSERT INTO wp_deploy_pushtest (name, content) VALUES (\"test_value_one\", \"test_content_one\")'";
 
+        $scmd->exec($remoteQueryCommandInsertData);
+
+        if($scmd->failure()) {
+            $this->markTestSkipped("Couldn't insert data into remote test table.");
+        }
     }
 
     public function tearDown() {
@@ -116,16 +135,18 @@ class PushTest extends \PHPUnit_Framework_TestCase {
         $options = $this->getDbSyncParams();
         $dbSync = new DatabaseSync($options);
 
-        $dbSync->push();
+        $dbSync->pull();
 
-        $scmd = new Ssh\Command($this->session);
-        $remoteQueryCommand = CommandUtil::buildMysqlCommand($this->getDbSyncParams()['remote']['db']);
-        $remoteQueryCommand .= " -e 'select name, content from wp_deploy_pushtest'";
-        $scmd->exec($remoteQueryCommand);
+        $result = $this->dbh->query("select name, content from wp_deploy_pushtest");
 
-        $this->assertTrue($scmd->success());
+        $this->assertNotFalse($result);
 
-        $this->assertRegExp("/test_value_one\ttest_content_one/", $scmd->getOutput());
+        $row = $result->fetch();
+
+        $this->assertNotFalse($row);
+
+        $this->assertEquals("test_value_one", $row['name']);
+        $this->assertEquals("test_content_one", $row['content']);
     }
 
     public function testSearchReplace() {
@@ -138,15 +159,17 @@ class PushTest extends \PHPUnit_Framework_TestCase {
 
         $dbSync = new DatabaseSync($options);
 
-        $dbSync->push();
+        $dbSync->pull();
 
-        $scmd = new Ssh\Command($this->session);
-        $remoteQueryCommand = CommandUtil::buildMysqlCommand($this->getDbSyncParams()['remote']['db']);
-        $remoteQueryCommand .= " -e 'select name, content from wp_deploy_pushtest'";
-        $scmd->exec($remoteQueryCommand);
+        $result = $this->dbh->query("select name, content from wp_deploy_pushtest");
 
-        $this->assertTrue($scmd->success());
+        $this->assertNotFalse($result);
 
-        $this->assertRegExp("/test_replaced_value_one\ttest_replaced_content_one/", $scmd->getOutput());
+        $row = $result->fetch();
+
+        $this->assertNotFalse($row);
+
+        $this->assertEquals("test_replaced_value_one", $row['name']);
+        $this->assertEquals("test_replaced_content_one", $row['content']);
     }
 }
