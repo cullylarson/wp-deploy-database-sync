@@ -11,6 +11,8 @@ use Cully\Ssh;
 // TODO -- maybe use define doStatusCallback as a trait?
 
 class Puller {
+    use TDoStatusCallback;
+
     /**
      * @var \Wordpress\Deploy\DatabaseSync\Options
      */
@@ -225,14 +227,5 @@ class Puller {
         if(!$dbSrSuccess) return false;
 
         return true;
-    }
-
-    /**
-     * @param Status $status
-     * @param \Closure|null $statusCallback
-     */
-    private function doStatusCallback(Status $status, $statusCallback) {
-        if(!$statusCallback) return;
-        else $statusCallback($status);
     }
 }

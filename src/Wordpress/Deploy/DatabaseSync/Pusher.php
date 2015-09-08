@@ -11,6 +11,8 @@ use Cully\Ssh;
 // TODO -- refactor so that pusher and puller can share some functions
 
 class Pusher {
+    use TDoStatusCallback;
+
     /**
      * @var \Wordpress\Deploy\DatabaseSync\Options
      */
@@ -225,14 +227,5 @@ class Pusher {
         if(!$dbSrSuccess) return false;
 
         return true;
-    }
-
-    /**
-     * @param Status $status
-     * @param \Closure|null $statusCallback
-     */
-    private function doStatusCallback(Status $status, $statusCallback) {
-        if(!$statusCallback) return;
-        else $statusCallback($status);
     }
 }
