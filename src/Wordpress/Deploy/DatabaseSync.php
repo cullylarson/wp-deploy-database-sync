@@ -2,7 +2,6 @@
 
 namespace Wordpress\Deploy;
 
-use Wordpress\Deploy\DatabaseSync\Status;
 use Wordpress\Deploy\DatabaseSync\Options;
 use Wordpress\Deploy\DatabaseSync\ExportFile;
 use Wordpress\Deploy\DatabaseSync\Pusher;
@@ -19,16 +18,16 @@ class DatabaseSync {
      */
     private $options;
     /**
-     * @var ExportFilename
+     * @var ExportFile
      */
-    private $exportFilename;
+    private $exportFile;
 
     /**
      * @param array $options
      */
     public function __construct(array $options) {
         $this->options = new Options($options);
-        $this->exportFilename = new ExportFile($this->generateExportFilenameBase());
+        $this->exportFile = new ExportFile($this->generateExportFilenameBase());
     }
 
     /**
@@ -37,7 +36,7 @@ class DatabaseSync {
      * @return boolean
      */
     public function push($statusCallback=null) {
-        $pusher = new Pusher($this->options, $this->exportFilename);
+        $pusher = new Pusher($this->options, $this->exportFile);
         return $pusher->push($statusCallback);
     }
 
@@ -47,7 +46,7 @@ class DatabaseSync {
      * @return boolean
      */
     public function pull($statusCallback=null) {
-        $puller = new Puller($this->options, $this->exportFilename);
+        $puller = new Puller($this->options, $this->exportFile);
         return $puller->pull($statusCallback);
     }
 

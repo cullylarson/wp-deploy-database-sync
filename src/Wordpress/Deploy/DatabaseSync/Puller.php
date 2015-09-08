@@ -18,7 +18,7 @@ class Puller {
     /**
      * @var \Wordpress\Deploy\DatabaseSync\ExportFile
      */
-    private $exportFilename;
+    private $exportFile;
     /**
      * @var array
      */
@@ -38,11 +38,11 @@ class Puller {
 
     /**
      * @param \Wordpress\Deploy\DatabaseSync\Options $options
-     * @param \Wordpress\Deploy\DatabaseSync\ExportFile $exportFilename
+     * @param \Wordpress\Deploy\DatabaseSync\ExportFile $exportFile
      */
-    public function __construct(Options $options, ExportFile $exportFilename) {
+    public function __construct(Options $options, ExportFile $exportFile) {
         $this->options = $options;
-        $this->exportFilename = $exportFilename;
+        $this->exportFile = $exportFile;
         $this->remote = $options->getRemoteOptions();
         $this->local = $options->getLocalOptions();
         $this->remoteDb = $options->getRemoteDbOptions();
@@ -63,7 +63,7 @@ class Puller {
         // failed
         if($scmd->failure()) {
             $this->doStatusCallback(new Status("Error encountered while running the dump command (Exit Status: {$scmd->getExitStatus()})", Status::MT_ERROR), $statusCallback);
-            $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT));
+            $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT), $statusCallback);
             return false;
         }
 
@@ -181,8 +181,8 @@ class Puller {
     }
 
     public function pull($statusCallback=null) {
-        $localDumpFilePath = $this->local['tmp'] . "/" . $this->exportFilename->getGzipFilename();
-        $remoteDumpFilePath = $this->remote['tmp'] . "/" . $this->exportFilename->getGzipFilename();
+        $localDumpFilePath = $this->local['tmp'] . "/" . $this->exportFile->getGzipFilename();
+        $remoteDumpFilePath = $this->remote['tmp'] . "/" . $this->exportFile->getGzipFilename();
 
         /*
          * Dump the local database
