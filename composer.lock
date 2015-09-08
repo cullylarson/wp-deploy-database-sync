@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "cullylarson/local-commands",
-            "version": "v1.0.1",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cullylarson/local-commands.git",
-                "reference": "ecd14d43e2dc3ba7430c60ba653b06281e60e636"
+                "reference": "1beef5b5f337bc8e6a66c2d083f755c53b46d197"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cullylarson/local-commands/zipball/ecd14d43e2dc3ba7430c60ba653b06281e60e636",
-                "reference": "ecd14d43e2dc3ba7430c60ba653b06281e60e636",
+                "url": "https://api.github.com/repos/cullylarson/local-commands/zipball/1beef5b5f337bc8e6a66c2d083f755c53b46d197",
+                "reference": "1beef5b5f337bc8e6a66c2d083f755c53b46d197",
                 "shasum": ""
             },
             "require": {
@@ -48,23 +48,24 @@
                 "command-line",
                 "shell"
             ],
-            "time": "2015-09-03 05:09:55"
+            "time": "2015-09-08 00:47:45"
         },
         {
             "name": "cullylarson/ssh-commands",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cullylarson/ssh-commands.git",
-                "reference": "641f84fe264ff194ad609e8005f57f45cd1dbbed"
+                "reference": "c94b9f703285a6905e14b7a57f33c95041e8afc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cullylarson/ssh-commands/zipball/641f84fe264ff194ad609e8005f57f45cd1dbbed",
-                "reference": "641f84fe264ff194ad609e8005f57f45cd1dbbed",
+                "url": "https://api.github.com/repos/cullylarson/ssh-commands/zipball/c94b9f703285a6905e14b7a57f33c95041e8afc9",
+                "reference": "c94b9f703285a6905e14b7a57f33c95041e8afc9",
                 "shasum": ""
             },
             "require": {
+                "cullylarson/local-commands": "~1.0",
                 "php": ">=5.3.0"
             },
             "require-dev": {
@@ -93,7 +94,7 @@
                 "remote",
                 "ssh"
             ],
-            "time": "2015-09-01 00:19:39"
+            "time": "2015-09-08 01:10:53"
         },
         {
             "name": "interconnectit/search-replace-db",
