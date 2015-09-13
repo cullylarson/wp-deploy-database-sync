@@ -7,8 +7,10 @@ use Cully\Ssh;
 use Cully\Local;
 
 class Machine {
+    private $command;
+
     /**
-     * @param ICommand $command Use to execute commands (remote or local)
+     * @param ICommand  $command Use to execute commands (remote or local)
      */
     public function __construct(ICommand $command) {
         $this->command = $command;

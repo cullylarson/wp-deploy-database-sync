@@ -15,7 +15,6 @@ class PullTest extends \PHPUnit_Framework_TestCase {
      * @var \PDO
      */
     private $dbh;
-    private $failed = false;//stub
 
     public function setUp() {
         /*
@@ -29,7 +28,6 @@ class PullTest extends \PHPUnit_Framework_TestCase {
         }
 
         if( !@ssh2_auth_agent($session, getenv("SSH_USER")) ) {
-            $this->failed = true;
             $this->markTestSkipped("Couldn't authenticate. You might need to: eval `ssh-agent -s` && ssh-add");
         }
 

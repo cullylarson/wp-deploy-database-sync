@@ -30,6 +30,10 @@ class DatabaseSync {
         $this->exportFile = new ExportFile($this->generateExportFilenameBase());
     }
 
+    public function sync() {
+        
+    }
+
     /**
      * @param \Closure|null $statusCallback
      *

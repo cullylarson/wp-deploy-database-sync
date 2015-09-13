@@ -100,13 +100,10 @@ class Pusher {
         if( !$this->options->shouldKeepLocalBackup() ) {
             $this->doStatusCallback(new Status("Deleting local dump file ({$localDumpFilePath}).", Status::MT_NOTICE), $statusCallback);
 
-            $scmd = new Ssh\Command($this->remote['ssh']);
-
             $localDumpRemoved = @unlink($localDumpFilePath);
 
             if(!$localDumpRemoved) {
                 $this->doStatusCallback(new Status("Failed to delete local dump file ({$localDumpFilePath}).", Status::MT_WARNING), $statusCallback);
-                $this->doStatusCallback(new Status($scmd->getError(), Status::MT_RAW_ERROR_OUTPUT), $statusCallback);
             }
         }
         else {

@@ -9,14 +9,17 @@ then check out the other projects in the `Wordpress\Deploy` namespace.
 
 ## Dependencies
 
-* The `mysql` linux command must be available via the command-line.  You'll
-get a `RuntimeException` if you try to call `DatabaseSync::sync` without it.
+* The `mysql` linux command must be available via the command-line, on the source
+and the destination machines.  You'll get a `RuntimeException` if you try to call
+`DatabaseSync::sync` without it.
 
-* The `mysqldump` linux command must be available via the command-line.  You'll
-get a `RuntimeException` if you try to call `DatabaseSync::sync` without it.
+* The `mysqldump` linux command must be available via the command-line, on the
+source and the destination machines.  You'll get a `RuntimeException` if you
+try to call `DatabaseSync::sync` without it.
 
-* The `gzip` linux command must be available via the command-line.  You'll
-get a `RuntimeException` if you try to call `DatabaseSync::sync` without it.
+* The `gzip` linux command must be available via the command-line, on the source
+and the destination machines.  You'll get a `RuntimeException` if you try to call
+`DatabaseSync::sync` without it.
 
 * All other dependencies are defined in `composer.json`.
 
