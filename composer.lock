@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "436e3dd3d5e61587dcec8d93f790e94f",
+    "hash": "77f713b08ff72a0996618748ab6af4f2",
     "packages": [
         {
             "name": "cullylarson/local-commands",
@@ -95,6 +95,53 @@
                 "ssh"
             ],
             "time": "2015-09-08 01:37:35"
+        },
+        {
+            "name": "cullylarson/ssh-copy",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cullylarson/ssh-copy.git",
+                "reference": "f26895c5906b904af9e1b7ca30e8701320f08f13"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cullylarson/ssh-copy/zipball/f26895c5906b904af9e1b7ca30e8701320f08f13",
+                "reference": "f26895c5906b904af9e1b7ca30e8701320f08f13",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "cullylarson/local-commands": "~1.0",
+                "cullylarson/ssh-commands": "~1.0",
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cully\\": "src/Cully"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Cully Larson",
+                    "email": "cully.larson@gmail.com"
+                }
+            ],
+            "description": "A library for performing remote copies. Copy to/from local, to/from remote, and even between two remote machines.",
+            "homepage": "https://github.com/cullylarson/ssh-copy",
+            "keywords": [
+                "copy",
+                "remote",
+                "ssh"
+            ],
+            "time": "2015-09-12 21:03:41"
         },
         {
             "name": "interconnectit/search-replace-db",
@@ -1036,16 +1083,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.3",
+            "version": "v2.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "71340e996171474a53f3d29111d046be4ad8a0ff"
+                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/71340e996171474a53f3d29111d046be4ad8a0ff",
-                "reference": "71340e996171474a53f3d29111d046be4ad8a0ff",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2dc7b06c065df96cc686c66da2705e5e18aef661",
+                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661",
                 "shasum": ""
             },
             "require": {
@@ -1081,7 +1128,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-28 14:07:07"
+            "time": "2015-08-24 07:13:45"
         }
     ],
     "aliases": [],
@@ -1090,7 +1137,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.0"
+        "php": ">=5.4.0"
     },
     "platform-dev": []
 }

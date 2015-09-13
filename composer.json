@@ -10,9 +10,10 @@
     "email": "cully.larson@gmail.com"
   }],
   "require": {
-    "php": ">=5.3.0",
+    "php": ">=5.4.0",
     "cullylarson/ssh-commands": "~1.0",
     "cullylarson/local-commands": "~1.0",
+    "cullylarson/ssh-copy": "~1.0",
     "interconnectit/search-replace-db": "~3.1"
   },
   "require-dev": {
