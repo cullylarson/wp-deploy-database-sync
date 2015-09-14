@@ -75,8 +75,10 @@ class DatabaseSync {
          * Delete the source dump file
          */
 
-        // we're waiting on this one, in case the this is a local to local
-        // sync, and they're using the same folder
+        // We're waiting on this one, in case this is a local to local
+        // sync, and they're using the same file (the source and dest
+        // dump file are the same file on the same machine). If we deleted
+        // it before the import, then it would be gone for the import.
 
         // (we don't care if it worked or not, press on)
         $this->deleteSourceDumpFile($statusCallback, $sourceDumpFile);
