@@ -10,8 +10,6 @@ use Wordpress\Deploy\DatabaseSync\TDoStatusCallback;
 use Cully\Local;
 use Cully\Ssh;
 
-// TODO -- support dry runs?
-
 class DatabaseSync {
     use TDoStatusCallback;
 
