@@ -13,19 +13,18 @@ connection. So, the connection remains secure, and you don't have to open up
 the database port to the world.
 
 ## Dependencies
+    
+* The following command-line commands must be available on the source
+machine, you'll get a `RuntimeException` if they aren't:
+    * `mysqldump`
+    * `gzip`
 
-* The `mysql` linux command must be available via the command-line, on the
-destination machine.  You'll get a `RuntimeException` if you try to call
-`DatabaseSync::sync` without it.
-
-* The `mysqldump` linux command must be available via the command-line, on the
-source machine.  You'll get a `RuntimeException` if you try to call
-`DatabaseSync::sync` without it.
-
-* The `gzip` linux command must be available via the command-line, on the source
-and the destination machines.  You'll get a `RuntimeException` if you try to call
-`DatabaseSync::sync` without it.
-
+* The following command-line commands must be available on the destination
+machine, you'll get a `RuntimeException` if they aren't:
+    * `mysql`
+    * `gunzip`
+    * `php`
+    
 * [interconnectit/Search-Replace-DB](https://github.com/interconnectit/Search-Replace-DB)
 must be installed on the Destination machine, if you intend to do search and replace.
 It is used to do the actual search and replace in the database.
