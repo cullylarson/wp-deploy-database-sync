@@ -27,7 +27,8 @@ machine. You'll get a `RuntimeException` if they aren't.
     
 * [interconnectit/Search-Replace-DB](https://github.com/interconnectit/Search-Replace-DB)
 must be installed on the Destination machine, if you intend to do search and replace.
-It is used to do the actual search and replace in the database.
+The `interconnectit/search-replace-db/srdb.cli.php` command-line script in that library
+is used to do the actual search and replace in the database.
 
 * All other dependencies are defined in `composer.json`.
 
