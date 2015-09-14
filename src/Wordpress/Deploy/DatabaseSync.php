@@ -37,7 +37,7 @@ class DatabaseSync {
      * @param array $options
      */
     public function __construct(array $options) {
-        $this->options = new Options($options, new ExportFile($this->generateExportFilenameBase()));
+        $this->options = new Options($options);
         $this->source = new Machine($this->options->getSource());
         $this->dest = new Machine($this->options->getDest());
     }
@@ -211,13 +211,5 @@ class DatabaseSync {
         }
 
         return $dumpFile;
-    }
-
-    private function generateExportFilenameBase() {
-        $dbName = $this->options->getSource()->getDbName();
-        $filename = preg_replace("/[^a-zA-Z0-9]/", "", $dbName);
-        if(empty($filename)) $filename = "database";
-
-        return $filename . "-" . date("Ymd-His");
     }
 }

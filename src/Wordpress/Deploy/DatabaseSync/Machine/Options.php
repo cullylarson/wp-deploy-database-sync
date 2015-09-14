@@ -106,14 +106,14 @@ class Options {
      * @return string
      */
     public function getDbUser() {
-        return $this->getDbOptions()['user'];
+        return $this->getDbOptions()['username'];
     }
 
     /**
      * @return string
      */
     public function getDbPass() {
-        return $this->getDbOptions()['pass'];
+        return $this->getDbOptions()['password'];
     }
 
     /**

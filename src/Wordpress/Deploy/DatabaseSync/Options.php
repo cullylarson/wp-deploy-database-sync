@@ -28,19 +28,18 @@ class Options {
 
     /**
      * @param array $options
-     * @param ExportFile $exportFile
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $options, ExportFile $exportFile) {
+    public function __construct(array $options) {
         if(!isset($options['source'])) $options['source'] = [];
         if(!isset($options['dest'])) $options['dest'] = [];
 
         $this->options = $options;
-        $this->exportFile = $exportFile;
+        $this->exportFile = new ExportFile($options['source']['db']['name']);
 
-        $this->source = new Machine\Options($options['source'], $exportFile);
-        $this->dest = new Machine\Options($options['dest'], $exportFile);
+        $this->source = new Machine\Options($options['source'], $this->exportFile);
+        $this->dest = new Machine\Options($options['dest'], $this->exportFile);
 
         $this->validate();
     }
@@ -107,5 +106,12 @@ class Options {
     private function getOption($option, $default) {
         if(isset($this->options[$option])) return $this->options[$option];
         else return $default;
+    }
+
+    private function generateExportFilenameBase($dbName) {
+        $filename = preg_replace("/[^a-zA-Z0-9]/", "", $dbName);
+        if(empty($filename)) $filename = "database";
+
+        return $filename . "-" . date("Ymd-His");
     }
 }

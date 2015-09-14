@@ -12,6 +12,8 @@ phpunit.xml
 # this is the code coverage generated when running phpunit.
 tests/log
 
-# test temp folder
-tests/tmp/*
-!tests/tmp/.gitkeep
+# test temp folders
+tests/tmp/source/*
+!tests/tmp/source/.gitkeep
+tests/tmp/dest/*
+!tests/tmp/dest/.gitkeep

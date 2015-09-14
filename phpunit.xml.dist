@@ -1,6 +1,20 @@
 <phpunit bootstrap="./tests/phpunit-bootstrap.php">
     <php>
         <!--
+            We will be performing tests on the following kinds of syncs:
+            o  Local -> Local
+            o  Local -> Remote
+            o  Remote -> Local
+            o  Remote -> Remote
+
+            All of the remote stuff will be done on a single remote machine,
+            so make sure the databases are DIFFERENT.
+
+            Since the Local -> Local sync is done on the same machine, we need
+            two local databases
+        -->
+
+        <!--
             Currently only supports connections using rsa auth.
 
             If you get an auth error when running the tests, you might need
@@ -10,26 +24,65 @@
         <env name="SSH_HOST" value="localhost" />
         <env name="SSH_PORT" value="22" />
 
-        <!-- temp folder for remote dump files -->
-        <env name="REMOTE_TMP" value="/tmp" />
+        <!--
+           - Remote source, on the ssh machine defined above
+          -->
 
-        <!-- path to the srdb command on the remote machine -->
-        <env name="REMOTE_SRDB" value="" />
+        <!-- temp folder for source dump files -->
+        <env name="REMOTE_SOURCE_TMP" value="/tmp" />
+        <!-- path to the srdb command on the source machine -->
+        <env name="REMOTE_SOURCE_SRDB" value="" />
+        <!-- database -->
+        <env name="REMOTE_SOURCE_MYSQL_HOST" value="localhost" />
+        <env name="REMOTE_SOURCE_MYSQL_USER" value="" />
+        <env name="REMOTE_SOURCE_MYSQL_PASS" value="" />
+        <env name="REMOTE_SOURCE_MYSQL_PORT" value="3306" />
+        <env name="REMOTE_SOURCE_MYSQL_NAME" value="" />
+
+        <!--
+           - Remote destination, on the ssh machine defined above
+          -->
+
+        <!-- temp folder for dest dump files -->
+        <env name="REMOTE_DEST_TMP" value="/tmp" />
+        <!-- path to the srdb command on the dest machine -->
+        <env name="REMOTE_DEST_SRDB" value="" />
+        <!-- database -->
+        <env name="REMOTE_DEST_MYSQL_HOST" value="localhost" />
+        <env name="REMOTE_DEST_MYSQL_USER" value="" />
+        <env name="REMOTE_DEST_MYSQL_PASS" value="" />
+        <env name="REMOTE_DEST_MYSQL_PORT" value="3306" />
+        <env name="REMOTE_DEST_MYSQL_NAME" value="" />
+
+        <!--
+           - Local source
+          -->
 
         <!-- temp folder for local dump files -->
-        <env name="LOCAL_TMP" value="./tests/tmp" />
+        <env name="LOCAL_SOURCE_TMP" value="./tests/tmp/source" />
+        <!-- path to the srdb command on the remote machine -->
+        <env name="LOCAL_SOURCE_SRDB" value="" />
+        <!-- database -->
+        <env name="LOCAL_SOURCE_MYSQL_HOST" value="localhost" />
+        <env name="LOCAL_SOURCE_MYSQL_USER" value="" />
+        <env name="LOCAL_SOURCE_MYSQL_PASS" value="" />
+        <env name="LOCAL_SOURCE_MYSQL_PORT" value="3306" />
+        <env name="LOCAL_SOURCE_MYSQL_NAME" value="" />
 
-        <env name="REMOTE_MYSQL_HOST" value="localhost" />
-        <env name="REMOTE_MYSQL_USER" value="" />
-        <env name="REMOTE_MYSQL_PASS" value="" />
-        <env name="REMOTE_MYSQL_PORT" value="3306" />
-        <env name="REMOTE_MYSQL_NAME" value="" />
+        <!--
+           - Local destination
+          -->
 
-        <env name="LOCAL_MYSQL_HOST" value="localhost" />
-        <env name="LOCAL_MYSQL_USER" value="" />
-        <env name="LOCAL_MYSQL_PASS" value="" />
-        <env name="LOCAL_MYSQL_PORT" value="3306" />
-        <env name="LOCAL_MYSQL_NAME" value="" />
+        <!-- temp folder for local dump files -->
+        <env name="LOCAL_DEST_TMP" value="./tests/tmp/dest" />
+        <!-- path to the srdb command on the remote machine -->
+        <env name="LOCAL_DEST_SRDB" value="" />
+        <!-- database -->
+        <env name="LOCAL_DEST_MYSQL_HOST" value="localhost" />
+        <env name="LOCAL_DEST_MYSQL_USER" value="" />
+        <env name="LOCAL_DEST_MYSQL_PASS" value="" />
+        <env name="LOCAL_DEST_MYSQL_PORT" value="3306" />
+        <env name="LOCAL_DEST_MYSQL_NAME" value="" />
     </php>
 
     <testsuite name="Wordpress Deploy DatabaseSync Test Suite">
@@ -41,7 +94,8 @@
             <directory suffix=".php">src/Wordpress/Deploy/</directory>
         </whitelist>
         <blacklist>
-            <directory>test/tmp</directory>
+            <directory>test/tmp/source</directory>
+            <directory>test/tmp/dest</directory>
         </blacklist>
     </filter>
 
