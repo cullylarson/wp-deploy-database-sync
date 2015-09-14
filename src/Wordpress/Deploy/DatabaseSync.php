@@ -169,7 +169,7 @@ class DatabaseSync {
      * @return bool True if succeeded or kept the file.  False if failed.
      */
     private function deleteDestDumpFile($statusCallback, $destDumpFile) {
-        $success = $this->source->deleteDumpFile($destDumpFile);
+        $success = $this->dest->deleteDumpFile($destDumpFile);
 
         // if null, we kept the file
         if( $success === null ) {
@@ -183,7 +183,7 @@ class DatabaseSync {
         }
         // failed
         else {
-            $this->doStatusCallback(new Status("Failed to dest source dump file ({$destDumpFile}).", Status::MT_ERROR), $statusCallback);
+            $this->doStatusCallback(new Status("Failed to delete source dump file ({$destDumpFile}).", Status::MT_ERROR), $statusCallback);
             return false;
         }
     }

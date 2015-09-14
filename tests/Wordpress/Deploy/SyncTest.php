@@ -5,14 +5,30 @@ namespace Test\Cully\Ssh;
 use Wordpress\Deploy\DatabaseSync;
 use Wordpress\Deploy\DatabaseSync\CommandUtil;
 use Cully\Ssh;
+use Wordpress\Deploy\DatabaseSync\Status;
 
 // TODO -- test with optional options
 
 class SyncTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var resource
+     */
     private $destSsh;
+
+    /**
+     * @var resource
+     */
     private $sourceSsh;
+
+    /**
+     * @var \PDO
+     */
     private $sourceDbh;
+
+    /**
+     * @var \PDO
+     */
     private $destDbh;
 
     public function setUp()
@@ -54,14 +70,14 @@ class SyncTest extends \PHPUnit_Framework_TestCase
          */
 
         try {
-            $this->sourceDbh = $sourceDbh = new \PDO(
+            $this->destDbh = $destDbh = new \PDO(
                 sprintf("mysql:host=%s;dbname=%s",
                     $this->getMachineParams()['local']['dest']['db']['host'],
                     $this->getMachineParams()['local']['dest']['db']['name']),
                 $this->getMachineParams()['local']['dest']['db']['username'],
                 $this->getMachineParams()['local']['dest']['db']['password']);
         } catch (\Exception $e) {
-            $this->markTestSkipped("Couldn't connect to local source database: {$e}");
+            $this->markTestSkipped("Couldn't connect to local dest database: {$e}");
             return;
         }
 
@@ -99,7 +115,7 @@ class SyncTest extends \PHPUnit_Framework_TestCase
          * Set up remote source database
          */
 
-        $remoteSourceCmd = new Ssh\Command($this->destSsh);
+        $remoteSourceCmd = new Ssh\Command($this->sourceSsh);
 
         $remoteMysql = CommandUtil::buildMysqlCommand($this->getMachineParams()['remote']['source']['db']);
         $remoteCreateCommand = "{$remoteMysql} -e 'CREATE TABLE wp_deploy_synctest (
@@ -117,7 +133,6 @@ class SyncTest extends \PHPUnit_Framework_TestCase
         $destInsertCommand = "{$remoteMysql} -e 'INSERT INTO wp_deploy_synctest (name, content) VALUES (\"test_value_one\", \"test_content_one\")'";
         $remoteSourceCmd->exec($destInsertCommand);
         if($remoteSourceCmd->failure()) $this->markTestSkipped("Couldn't insert data into remote source test table.");
-
     }
 
     public function tearDown() {
@@ -192,18 +207,6 @@ class SyncTest extends \PHPUnit_Framework_TestCase
             ],
             'remote' => [
                 'source' => [
-                    'ssh' => $this->sourceSsh,
-                    'tmp' => getenv("REMOTE_DEST_TMP"),
-                    'srdb' => getenv("REMOTE_DEST_SRDB"),
-                    'db' => [
-                        'host' => getenv("REMOTE_DEST_MYSQL_HOST"),
-                        'username' => getenv("REMOTE_DEST_MYSQL_USER"),
-                        'password' => getenv("REMOTE_DEST_MYSQL_PASS"),
-                        'name' => getenv("REMOTE_DEST_MYSQL_NAME"),
-                        'port' => getenv("REMOTE_DEST_MYSQL_PORT"),
-                    ],
-                ],
-                'dest' => [
                     'ssh' => $this->destSsh,
                     'tmp' => getenv("REMOTE_SOURCE_TMP"),
                     'srdb' => getenv("REMOTE_SOURCE_SRDB"),
@@ -215,11 +218,23 @@ class SyncTest extends \PHPUnit_Framework_TestCase
                         'port' => getenv("REMOTE_SOURCE_MYSQL_PORT"),
                     ],
                 ],
+                'dest' => [
+                    'ssh' => $this->sourceSsh,
+                    'tmp' => getenv("REMOTE_DEST_TMP"),
+                    'srdb' => getenv("REMOTE_DEST_SRDB"),
+                    'db' => [
+                        'host' => getenv("REMOTE_DEST_MYSQL_HOST"),
+                        'username' => getenv("REMOTE_DEST_MYSQL_USER"),
+                        'password' => getenv("REMOTE_DEST_MYSQL_PASS"),
+                        'name' => getenv("REMOTE_DEST_MYSQL_NAME"),
+                        'port' => getenv("REMOTE_DEST_MYSQL_PORT"),
+                    ],
+                ],
             ]
         ];
     }
 
-    public function getLocalToRemoteOptions() {
+    private function getLocalToRemoteOptions() {
         return [
             // local source
             'source' => $this->getMachineParams()['local']['source'],
@@ -228,11 +243,21 @@ class SyncTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testBasicSync() {
+    private function getRemoteToLocalOptions() {
+        return [
+            // remote source
+            'source' => $this->getMachineParams()['remote']['source'],
+            // local dest
+            'dest' => $this->getMachineParams()['local']['dest'],
+        ];
+    }
+
+    public function testBasicLocalToRemoteSync() {
         $options = $this->getLocalToRemoteOptions();
         $dbSync = new DatabaseSync($options);
 
-        $dbSync->sync();
+        $success = $dbSync->sync([$this, "statusCallback"]);
+        $this->assertTrue($success);
 
         $scmd = new Ssh\Command($this->destSsh);
         $remoteQueryCommand = CommandUtil::buildMysqlCommand($options['dest']['db']);
@@ -242,5 +267,28 @@ class SyncTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($scmd->success());
 
         $this->assertRegExp("/test_value_one\ttest_content_one/", $scmd->getOutput());
+    }
+
+    public function testBasicRemoteToLocalSync() {
+        $options = $this->getRemoteToLocalOptions();
+        $dbSync = new DatabaseSync($options);
+
+        $success = $dbSync->sync([$this, "statusCallback"]);
+        $this->assertTrue($success);
+
+        $result = $this->destDbh->query("select name, content from wp_deploy_synctest");
+
+        $this->assertNotFalse($result);
+
+        $row = $result->fetch();
+
+        $this->assertNotFalse($row);
+
+        $this->assertEquals("test_value_one", $row['name']);
+        $this->assertEquals("test_content_one", $row['content']);
+    }
+
+    public function statusCallback(Status $status) {
+        //echo "STATUS: {$status->Message}\n";
     }
 }

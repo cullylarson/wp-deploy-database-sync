@@ -36,7 +36,7 @@ class Options {
         if(!isset($options['dest'])) $options['dest'] = [];
 
         $this->options = $options;
-        $this->exportFile = new ExportFile($options['source']['db']['name']);
+        $this->exportFile = new ExportFile($this->generateExportFilenameBase($options['source']['db']['name']));
 
         $this->source = new Machine\Options($options['source'], $this->exportFile);
         $this->dest = new Machine\Options($options['dest'], $this->exportFile);
