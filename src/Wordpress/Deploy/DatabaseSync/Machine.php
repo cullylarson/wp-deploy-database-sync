@@ -68,6 +68,11 @@ class Machine {
     }
 
     /**
+     * Will copy the file from the source to the destination.
+     *
+     * If this is a local to local copy, and the destination is the same as the source,
+     * it won't be copied (since it's already at it's destination).
+     *
      * @param string    $sourceDumpFile     Path to source file.
      * @param Machine   $dest
      * @param string|null $localTmp         If this is a remote to remote copy, pass the localTmp
@@ -77,19 +82,23 @@ class Machine {
      * @return string|bool  False if failed, otherwise the path to the dump file on the destination.
      */
     public function copyDumpFile($sourceDumpFile, Machine $dest, $localTmp=null) {
-        $copier = new Copier($this->options->getSsh(), $dest->getOptions()->getSsh(), $localTmp);
         $destDumpFile = $dest->generateDumpFilePath();
 
-        try {
-            if(!$copier->copy($sourceDumpFile, $destDumpFile)) {
-                return false;
+        // don't copy if this is a local to local sync, and the source and dest are
+        // the same (it's already where we want it to be)
+        if( !$this->getOptions()->isLocal() || !$dest->getOptions()->isLocal() || $sourceDumpFile != $destDumpFile ) {
+
+            $copier = new Copier($this->options->getSsh(), $dest->getOptions()->getSsh(), $localTmp);
+
+            try {
+                if (!$copier->copy($sourceDumpFile, $destDumpFile)) {
+                    return false;
+                }
+            } catch (\UnexpectedValueException $e) {
+                throw new \InvalidArgumentException($e->getMessage());
+            } catch (\InvalidArgumentException $e) {
+                throw new \InvalidArgumentException($e->getMessage());
             }
-        }
-        catch(\UnexpectedValueException $e) {
-            throw new \InvalidArgumentException($e->getMessage());
-        }
-        catch(\InvalidArgumentException $e) {
-            throw new \InvalidArgumentException($e->getMessage());
         }
 
         return $destDumpFile;
@@ -98,12 +107,12 @@ class Machine {
     /**
      * @param string $dumpFile
      * @return null|bool    True if delete succeeds. Null if we didn't delete
-     *                      because we're keeping a backup. False if we tried
+     *                      because we're keeping the dump file. False if we tried
      *                      to delete, but failed.
      */
     public function deleteDumpFile($dumpFile) {
         // if we want to keep the dump file, don't do anything
-        if($this->options->shouldKeepBackup()) return null;
+        if($this->options->shouldKeepDump()) return null;
 
         $this->command->exec("rm " . escapeshellarg($dumpFile));
 

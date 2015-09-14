@@ -55,6 +55,9 @@ class Options {
         if($this->source->isRemote() && $this->dest->isRemote() && !isset($this->options['local_tmp'])) throw new \InvalidArgumentException("You must provide the path to a folder for temporary files on the local machine, to perform remote to remote syncs.");
 
         if(isset($this->options['search_replace']) && !is_array($this->options['search_replace'])) throw new \InvalidArgumentException("The 'search_replace' param must be an array.");
+
+        // srdb must be set on the destination if we are going to do search and replace
+        if(!empty($this->options['search_replace']) && empty($this->dest->getSrdb())) throw new \InvalidArgumentException("The 'srdb' option must be defined on the destiation if 'search_replace' is provided.");
     }
 
     public function getLocalTmp() {

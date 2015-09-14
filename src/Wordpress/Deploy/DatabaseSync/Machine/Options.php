@@ -38,7 +38,7 @@ class Options {
             'db' => [
                 'port' => 3306,
             ],
-            'keep_backup' => false,
+            'keep_dump' => false,
         ];
 
         $this->options = array_merge($defaults, $this->options);
@@ -176,8 +176,8 @@ class Options {
     /**
      * @return bool
      */
-    public function shouldKeepBackup() {
-        return $this->getBoolOption('keep_backup', false);
+    public function shouldKeepDump() {
+        return $this->getBoolOption('keep_dump', false);
     }
 
     /**

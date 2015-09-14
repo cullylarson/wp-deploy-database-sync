@@ -12,6 +12,7 @@ use Cully\Ssh;
 
 // TODO -- support dry runs?
 // TODO -- no need for two tmp folders when doing a local to local
+// TODO -- make sure mysql, mysqldump, gzip commands exist
 
 class DatabaseSync {
     use TDoStatusCallback;
