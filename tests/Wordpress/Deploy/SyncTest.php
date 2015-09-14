@@ -8,6 +8,7 @@ use Cully\Ssh;
 use Wordpress\Deploy\DatabaseSync\Status;
 
 // TODO -- test with optional options
+// TODO -- test search and replace
 
 class SyncTest extends \PHPUnit_Framework_TestCase
 {

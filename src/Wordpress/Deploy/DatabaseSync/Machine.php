@@ -33,6 +33,46 @@ class Machine {
     }
 
     /**
+     * Make sure that necessary commands exist on this
+     * machine.
+     *
+     * @throws \RuntimeException
+     */
+    public function ensureSourceCommands() {
+        // mysqldump
+        $this->command->exec("which mysqldump");
+        if($this->command->failure()) throw new \RuntimeException("The 'mysqldump' command does not exist on the source machine.");
+
+        // gzip
+        $this->command->exec("which gzip");
+        if($this->command->failure()) throw new \RuntimeException("The 'gzip' command does not exist on the source machine.");
+    }
+
+    /**
+     * Make sure that necessary commands exist on this
+     * machine.
+     *
+     * @throws \RuntimeException
+     */
+    public function ensureDestCommands() {
+        // mysql
+        $this->command->exec("which mysql");
+        if($this->command->failure()) throw new \RuntimeException("The 'mysql' command does not exist on the destination machine.");
+
+        // gunzip
+        $this->command->exec("which gunzip");
+        if($this->command->failure()) throw new \RuntimeException("The 'gunzip' command does not exist on the destination machine.");
+
+        // php
+        $this->command->exec("which php");
+        if($this->command->failure()) throw new \RuntimeException("The 'php' command does not exist on the destination machine.");
+
+        // srdb
+        $this->command->exec("ls " . escapeshellarg($this->getOptions()->getSrdb()));
+        if($this->command->failure()) throw new \RuntimeException("The srdb command provided does not exist or is not accessible.");
+    }
+
+    /**
      * @return Machine\Options
      */
     public function getOptions() {

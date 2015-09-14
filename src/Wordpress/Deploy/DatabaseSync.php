@@ -11,8 +11,6 @@ use Cully\Local;
 use Cully\Ssh;
 
 // TODO -- support dry runs?
-// TODO -- no need for two tmp folders when doing a local to local
-// TODO -- make sure mysql, mysqldump, gzip commands exist
 
 class DatabaseSync {
     use TDoStatusCallback;
@@ -34,11 +32,17 @@ class DatabaseSync {
 
     /**
      * @param array $options
+     *
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function __construct(array $options) {
         $this->options = new Options($options);
         $this->source = new Machine($this->options->getSource());
         $this->dest = new Machine($this->options->getDest());
+
+        $this->source->ensureSourceCommands();
+        $this->dest->ensureDestCommands();
     }
 
     /**
