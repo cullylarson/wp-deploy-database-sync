@@ -3,9 +3,6 @@
 namespace Wordpress\Deploy;
 
 use Wordpress\Deploy\DatabaseSync\Options;
-use Wordpress\Deploy\DatabaseSync\ExportFile;
-use Wordpress\Deploy\DatabaseSync\Pusher;
-use Wordpress\Deploy\DatabaseSync\Puller;
 use Wordpress\Deploy\DatabaseSync\Machine;
 use Wordpress\Deploy\DatabaseSync\Status;
 use Wordpress\Deploy\DatabaseSync\TDoStatusCallback;
@@ -14,6 +11,7 @@ use Cully\Local;
 use Cully\Ssh;
 
 // TODO -- support dry runs?
+// TODO -- no need for two tmp folders when doing a local to local
 
 class DatabaseSync {
     use TDoStatusCallback;
