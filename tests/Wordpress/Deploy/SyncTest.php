@@ -243,6 +243,15 @@ class SyncTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    private function getLocalToLocalOptions() {
+        return [
+            // local source
+            'source' => $this->getMachineParams()['local']['source'],
+            // local dest
+            'dest' => $this->getMachineParams()['local']['dest'],
+        ];
+    }
+
     private function getRemoteToLocalOptions() {
         return [
             // remote source
@@ -250,6 +259,37 @@ class SyncTest extends \PHPUnit_Framework_TestCase
             // local dest
             'dest' => $this->getMachineParams()['local']['dest'],
         ];
+    }
+
+    private function getRemoteToRemoteOptions() {
+        return [
+            // remote source
+            'source' => $this->getMachineParams()['remote']['source'],
+            // remote dest
+            'dest' => $this->getMachineParams()['remote']['dest'],
+
+            // local tmp
+            'local_tmp' => getenv('LOCAL_SOURCE_TMP'),
+        ];
+    }
+
+    public function testBasicLocalToLocalSync() {
+        $options = $this->getLocalToLocalOptions();
+        $dbSync = new DatabaseSync($options);
+
+        $success = $dbSync->sync([$this, "statusCallback"]);
+        $this->assertTrue($success);
+
+        $result = $this->destDbh->query("select name, content from wp_deploy_synctest");
+
+        $this->assertNotFalse($result);
+
+        $row = $result->fetch();
+
+        $this->assertNotFalse($row);
+
+        $this->assertEquals("test_value_one", $row['name']);
+        $this->assertEquals("test_content_one", $row['content']);
     }
 
     public function testBasicLocalToRemoteSync() {
@@ -286,6 +326,31 @@ class SyncTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("test_value_one", $row['name']);
         $this->assertEquals("test_content_one", $row['content']);
+    }
+
+    public function testBasicRemoteToRemoteSync() {
+        $options = $this->getRemoteToRemoteOptions();
+        $dbSync = new DatabaseSync($options);
+
+        $success = $dbSync->sync([$this, "statusCallback"]);
+        $this->assertTrue($success);
+
+        $scmd = new Ssh\Command($this->destSsh);
+        $remoteQueryCommand = CommandUtil::buildMysqlCommand($options['dest']['db']);
+        $remoteQueryCommand .= " -e 'select name, content from wp_deploy_synctest'";
+        $scmd->exec($remoteQueryCommand);
+
+        $this->assertTrue($scmd->success());
+
+        $this->assertRegExp("/test_value_one\ttest_content_one/", $scmd->getOutput());
+    }
+
+    public function testBasicRemoteToRemoteNoLocalTmp() {
+        $options = $this->getRemoteToRemoteOptions();
+        $options['local_tmp'] = null;
+
+        $this->setExpectedException("InvalidArgumentException", "You must provide the path to a folder for temporary files on the local machine, to perform remote to remote syncs.");
+        new DatabaseSync($options);
     }
 
     public function statusCallback(Status $status) {
