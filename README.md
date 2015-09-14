@@ -85,11 +85,10 @@ options, it would look like this:
 
 The definition of these options is as follows:
 
-* __local_tmp__ (string) (semi-required)_ Require for remote to remote syncs. When
+* **local_tmp** (string) (semi-required)_ Required for remote to remote syncs. When
 a remote to remote sync is performed, a dump file is copied from the source machine
 to the local machine, and then from the local machine to the destination machine.
-To do this, you need to provide the path to a folder for temporary files on the
-local machine.
+To do this, a folder for temporary files is used on the local machine.
 
 * **search_replace** (array) (optional, default:[]) If you want to do a search and
 replace on the data in the database, provide it here.  The keys of this array are
@@ -120,7 +119,7 @@ associative array with the following values:
     generated for the destination machine, so this is not a backup of the destination._
     * __db__ _(array) (required)_ Info. about the database on this machine.
         * __host__ _(string) (required)_ The host, as viewed by the source or dest
-        machine itself. In other words, if the dest machine things the host is
+        machine itself. In other words, if the dest machine thinks the host is
         'localhost', you can use 'localhost' here. This is because the dump and
         import are done on the machine's themselves, via SSH.
         * __username__ _(string) (required)_
@@ -141,7 +140,7 @@ a remote to remote sync, then the following extra steps are taken:
     2. The dump file is copied from the local machine to the destination machine.
     3. The dump file is removed from the local machine.
 3. The dump file is removed from the source, unless the **keep_dump** option is set to
-_true_ on the source machine options.
+_true_ in the source machine options.
 4. The dump file is imported into the destination machine's database. NOTE: This will
 completely overwrite the destination database.
 5. The dump file is removed from the destination machine, unless the **keep_dump** option
@@ -153,10 +152,11 @@ will be replaced with the text from the corresponding value in the array. E.g.:
     $search_replace = [
         "look for this" => "replace with this",
         "and look for this" => "so it can be replaced with this",
+        "localhost:8080" => "productionurl.com",
     ];
     ```
     
-Since the transfer is doing using the `mysqldump` and `mysql` commands on the
+Since the transfer is done using the `mysqldump` and `mysql` commands on the
 source and dest machines, no remote `mysql` command connection is made. Everything
 is done over SSH.
     
