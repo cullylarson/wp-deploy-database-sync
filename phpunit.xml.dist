@@ -30,8 +30,6 @@
 
         <!-- temp folder for source dump files -->
         <env name="REMOTE_SOURCE_TMP" value="/tmp" />
-        <!-- path to the srdb command on the source machine -->
-        <env name="REMOTE_SOURCE_SRDB" value="" />
         <!-- database -->
         <env name="REMOTE_SOURCE_MYSQL_HOST" value="localhost" />
         <env name="REMOTE_SOURCE_MYSQL_USER" value="" />
@@ -60,8 +58,6 @@
 
         <!-- temp folder for local dump files -->
         <env name="LOCAL_SOURCE_TMP" value="./tests/tmp/source" />
-        <!-- path to the srdb command on the remote machine -->
-        <env name="LOCAL_SOURCE_SRDB" value="" />
         <!-- database -->
         <env name="LOCAL_SOURCE_MYSQL_HOST" value="localhost" />
         <env name="LOCAL_SOURCE_MYSQL_USER" value="" />

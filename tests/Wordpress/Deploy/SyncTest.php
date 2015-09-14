@@ -182,7 +182,6 @@ class SyncTest extends \PHPUnit_Framework_TestCase
             'local' => [
                 'source' => [
                     'tmp' => getenv("LOCAL_SOURCE_TMP"),
-                    'srdb' => getenv("LOCAL_SOURCE_SRDB"),
                     'local' => true,
                     'db' => [
                         'host' => getenv("LOCAL_SOURCE_MYSQL_HOST"),
@@ -209,7 +208,6 @@ class SyncTest extends \PHPUnit_Framework_TestCase
                 'source' => [
                     'ssh' => $this->destSsh,
                     'tmp' => getenv("REMOTE_SOURCE_TMP"),
-                    'srdb' => getenv("REMOTE_SOURCE_SRDB"),
                     'db' => [
                         'host' => getenv("REMOTE_SOURCE_MYSQL_HOST"),
                         'username' => getenv("REMOTE_SOURCE_MYSQL_USER"),

@@ -32,7 +32,6 @@ call_user_func(function() {
         "SSH_PORT",
 
         "REMOTE_SOURCE_TMP",
-        "REMOTE_SOURCE_SRDB",
         "REMOTE_SOURCE_MYSQL_HOST",
         "REMOTE_SOURCE_MYSQL_USER",
         "REMOTE_SOURCE_MYSQL_PASS",
@@ -48,7 +47,6 @@ call_user_func(function() {
         "REMOTE_DEST_MYSQL_NAME",
 
         "LOCAL_SOURCE_TMP",
-        "LOCAL_SOURCE_SRDB",
         "LOCAL_SOURCE_MYSQL_HOST",
         "LOCAL_SOURCE_MYSQL_USER",
         "LOCAL_SOURCE_MYSQL_PASS",
