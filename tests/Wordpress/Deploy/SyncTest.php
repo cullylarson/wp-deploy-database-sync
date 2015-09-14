@@ -290,6 +290,27 @@ class SyncTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("test_content_one", $row['content']);
     }
 
+    public function testBasicLocalToLocalSameTmp() {
+        $options = $this->getLocalToLocalOptions();
+        // same tmp
+        $options['dest']['tmp'] = $options['source']['tmp'];
+        $dbSync = new DatabaseSync($options);
+
+        $success = $dbSync->sync([$this, "statusCallback"]);
+        $this->assertTrue($success);
+
+        $result = $this->destDbh->query("select name, content from wp_deploy_synctest");
+
+        $this->assertNotFalse($result);
+
+        $row = $result->fetch();
+
+        $this->assertNotFalse($row);
+
+        $this->assertEquals("test_value_one", $row['name']);
+        $this->assertEquals("test_content_one", $row['content']);
+    }
+
     public function testBasicLocalToRemoteSync() {
         $options = $this->getLocalToRemoteOptions();
         $dbSync = new DatabaseSync($options);

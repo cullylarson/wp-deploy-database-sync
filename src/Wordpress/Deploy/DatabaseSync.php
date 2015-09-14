@@ -59,22 +59,25 @@ class DatabaseSync {
         if( !($destDumpFile = $this->copySourceDumpFileToDestination($statusCallback, $sourceDumpFile)) ) return false;
 
         /*
-         * Delete the source dump file
-         */
-
-        // (we don't care if it worked or not, press on)
-        $this->deleteSourceDumpFile($statusCallback, $sourceDumpFile);
-
-
-        /*
          * Import dest dump file
          */
 
         if( !$this->importDestDumpFile($statusCallback, $destDumpFile) ) {
-            // try to delete the dump file
+            // try to delete the dump files
             $this->dest->deleteDumpFile($destDumpFile);
+            $this->source->deleteDumpFile($sourceDumpFile);
             return false;
         }
+
+        /*
+         * Delete the source dump file
+         */
+
+        // we're waiting on this one, in case the this is a local to local
+        // sync, and they're using the same folder
+
+        // (we don't care if it worked or not, press on)
+        $this->deleteSourceDumpFile($statusCallback, $sourceDumpFile);
 
         /*
          * Delete dest dump file
@@ -182,7 +185,17 @@ class DatabaseSync {
         }
         // failed
         else {
-            $this->doStatusCallback(new Status("Failed to delete source dump file ({$destDumpFile}).", Status::MT_ERROR), $statusCallback);
+            // we may have failed because this is a local to local copy, just
+            // indicate that in the status
+            if( $this->source->getOptions()->isLocal() && $this->source->getOptions()->isLocal()) {
+                $this->doStatusCallback(new Status("Failed to delete source dump file ({$destDumpFile}). It may have already been deleted in a previous step.", Status::MT_ERROR), $statusCallback);
+            }
+            // otherwise, generic error
+            else {
+                $this->doStatusCallback(new Status("Failed to delete source dump file ({$destDumpFile}).", Status::MT_ERROR), $statusCallback);
+            }
+
+            // always return false on failure
             return false;
         }
     }
