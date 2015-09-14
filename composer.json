@@ -1,7 +1,7 @@
 {
   "name": "cullylarson/wp-deploy-database-sync",
   "type": "library",
-  "description": "Library for syncing Wordpress databases. Useful for deploying, or pulling installs.",
+  "description": "A library for syncing Wordpress databases.  Supports syncs to and from local and remote machines, and even remote to remote syncs. Useful as part of a deployment system.",
   "keywords": ["wordpress", "deploy"],
   "homepage": "https://github.com/cullylarson/wp-deploy-database-sync",
   "license": "MIT",
