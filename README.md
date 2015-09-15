@@ -14,12 +14,12 @@ the database port to the world.
 
 ## Dependencies
     
-* The following command-line commands must be available on the source
+* The following shell commands must be available on the source
 machine. You'll get a `RuntimeException` if they aren't.
     * `mysqldump`
     * `gzip`
 
-* The following command-line commands must be available on the destination
+* The following shell commands must be available on the destination
 machine. You'll get a `RuntimeException` if they aren't.
     * `mysql`
     * `gunzip`
