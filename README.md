@@ -86,12 +86,12 @@ options, it would look like this:
 
 The definition of these options is as follows:
 
-* **local_tmp** (string) (semi-required)_ Required for remote to remote syncs. When
+* **local_tmp** _(string) (semi-required)_ Required for remote to remote syncs. When
 a remote to remote sync is performed, a dump file is copied from the source machine
 to the local machine, and then from the local machine to the destination machine.
 To do this, a folder for temporary files is used on the local machine.
 
-* **search_replace** (array) (optional, default:[]) If you want to do a search and
+* **search_replace** _(array) (optional, default:[])_ If you want to do a search and
 replace on the data in the database, provide it here.  The keys of this array are
 the text that will be searched for, and the values are what the search text will
 be replaced with. The search and replace is done in such a way as to preserve
@@ -336,6 +336,8 @@ $options = [
             'name' => "dest_db_name",
         ]
    ],
+   // required for remotet-to-remote syncs
+   'local_tmp' => '/tmp',
 ];
 
 $dbSync = new DatabaseSync($options);
