@@ -68,8 +68,10 @@ class Machine {
         if($this->command->failure()) throw new \RuntimeException("The 'php' command does not exist on the destination machine.");
 
         // srdb
-        $this->command->exec("ls " . escapeshellarg($this->getOptions()->getSrdb()));
-        if($this->command->failure()) throw new \RuntimeException("The srdb command provided does not exist or is not accessible.");
+        if(!empty($this->getOptions()->getSrdb())) {
+            $this->command->exec("ls " . escapeshellarg($this->getOptions()->getSrdb()));
+            if($this->command->failure()) throw new \RuntimeException("The srdb command provided does not exist or is not accessible.");
+        }
     }
 
     /**
